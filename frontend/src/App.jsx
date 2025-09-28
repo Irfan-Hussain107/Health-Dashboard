@@ -1,11 +1,10 @@
-import { useState } from 'react'
+import HomePage from './pages/HomePage'
 
 function App() {
-
   return (
-    <>
-      <div className='bg-blue-500'>Hello</div>
-    </>
+    <div className="bg-gray-900 min-h-screen text-white font-sans">
+      <HomePage />
+    </div>
   )
 }
 

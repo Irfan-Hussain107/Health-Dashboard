@@ -1,24 +1,21 @@
-backend/venv/
+backend/express-api/node_modules/
+backend/express-api/.env
+backend/express-api/npm-debug.log*
+backend/express-api/yarn-debug.log*
+backend/express-api/yarn-error.log*
 
-backend/.env
-
-backend/__pycache__/
-backend/*.pyc
-
+backend/python-ml-service/venv/
+backend/python-ml-service/.env
+backend/python-ml-service/__pycache__/
+backend/python-ml-service/*.pyc
 
 frontend/node_modules/
-
 frontend/dist/
-
 frontend/.env
 frontend/.env.*
-
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
 
-
-
 .DS_Store
-
 Thumbs.db
