@@ -3,6 +3,7 @@ import cors from 'cors';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
+import noiseLevel from './services/noiceLevel';
 
 dotenv.config();
 
@@ -111,8 +112,7 @@ async function getCivicComplaintsAndNoise() {
             noiseComplaintsCount++;
         }
     });
-    const noiseLevel = { day: 55 + noiseComplaintsCount * 5, night: 45 + noiseComplaintsCount * 5 };
-    return { complaints, noiseLevel };
+    return { complaints };
 }
 
 app.post('/api/report-card', async (req, res) => {
@@ -138,7 +138,8 @@ app.post('/api/report-card', async (req, res) => {
 
         console.log("Using coordinates:", coordinates);
         const airQuality = await getRealtimeAQI(coordinates.lat, coordinates.lon);
-        const { complaints, noiseLevel } = await getCivicComplaintsAndNoise();
+        const noiseData = await noiseLevel(coordinates.lat, coordinates.lon)
+        const { complaints } = await getCivicComplaintsAndNoise();
 
         const mlServiceUrl = `${process.env.PYTHON_ML_API_URL}/categorize`;
         const mlResponse = await axios.post(mlServiceUrl, {
@@ -146,9 +147,11 @@ app.post('/api/report-card', async (req, res) => {
         });
         const categoryFromML = mlResponse.data.category;
 
+        const score = noiseData.noiseScore
+
         const responseData = {
             location: displayLocation,
-            overallScore: Math.floor(100 - (airQuality.aqi / 3)),
+            overallScore: Math.floor(100 - (airQuality.aqi / 3) - (parseFloat(score) / 5)),
             airQuality: airQuality,
             noiseLevel: noiseLevel,
             civicComplaints: {
