@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import MainInputDashboard from './components/MainInputDashboard';
-import EnvironmentalReport from './components/EnvironmentalReport';
+import MainInputDashboard from './pages/MainInputDashboard';
+import EnvironmentalReport from './pages/EnvironmentalReport';
 import { fetchReportCard } from './services/apiService.js';
 
 function App() {
