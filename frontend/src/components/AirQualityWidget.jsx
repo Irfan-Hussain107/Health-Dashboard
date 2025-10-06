@@ -1,4 +1,3 @@
-// This file should be in frontend/src/components/AirQualityWidget.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer } from 'recharts';

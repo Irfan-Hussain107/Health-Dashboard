@@ -1,4 +1,3 @@
-// This file should be in frontend/src/components/RecommendationsWidget.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 

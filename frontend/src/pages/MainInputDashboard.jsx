@@ -103,7 +103,6 @@ const MainInputDashboard = ({ onLocationSearch, loading }) => {
 
     return (
         <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-            {/* Left: Search Controls */}
             <div className="flex items-center justify-center p-8 bg-gradient-to-br from-green-50 to-blue-50">
                 <div className="max-w-md w-full text-center lg:text-left">
                     <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -167,7 +166,6 @@ const MainInputDashboard = ({ onLocationSearch, loading }) => {
                 </div>
             </div>
             
-            {/* Right: Interactive Map */}
             <div className="h-96 lg:h-full bg-gradient-to-br from-green-50 to-blue-50 p-4 lg:p-8 flex items-center justify-center relative">
                 <div className="w-full h-full bg-white rounded-2xl shadow-lg border overflow-hidden relative">
                     <GoogleMap

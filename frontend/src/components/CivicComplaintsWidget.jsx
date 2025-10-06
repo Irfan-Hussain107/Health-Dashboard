@@ -1,4 +1,3 @@
-// This file should be in frontend/src/components/CivicComplaintsWidget.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ExclamationTriangleIcon, ChatBubbleBottomCenterTextIcon } from '@heroicons/react/24/outline';

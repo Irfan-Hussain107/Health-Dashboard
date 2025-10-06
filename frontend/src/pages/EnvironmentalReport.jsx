@@ -1,4 +1,3 @@
-// This file should be moved to frontend/src/pages/EnvironmentalReport.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';

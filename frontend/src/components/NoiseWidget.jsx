@@ -1,4 +1,3 @@
-// This file should be in frontend/src/components/NoiseWidget.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';

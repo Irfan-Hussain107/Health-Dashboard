@@ -15,7 +15,6 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 app.use(cors());
 app.use(express.json());
 
-// Geocoding: Try Google first, fallback to LocationIQ
 async function getCoordinates(address) {
     // Try Google Geocoding
     if (process.env.GOOGLE_API_KEY) {
@@ -61,14 +60,11 @@ function calculateAQI(pm25) {
     return Math.round(((bp[3] - bp[2]) / (bp[1] - bp[0])) * (pm25 - bp[0]) + bp[2]);
 }
 
-// Fetch real-time AQI
 async function getAQI(lat, lon) {
-    // Validate coordinates
     if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
         throw new Error(`Invalid coordinates: ${lat}, ${lon}`);
     }
     
-    // Try OpenAQ
     if (process.env.OPENAQ_API_KEY) {
         try {
             const locUrl = `https://api.openaq.org/v3/locations?coordinates=${lon},${lat}&radius=25000&limit=10`;
@@ -127,7 +123,6 @@ async function getAQI(lat, lon) {
         console.log("⚠️ OpenAQ API key not configured, skipping to WAQI");
     }
     
-    // Fallback to WAQI
     console.log("🔄 Using WAQI fallback service...");
     if (!process.env.WAQI_API_KEY) throw new Error("All AQI services failed - no API keys");
     
@@ -254,7 +249,6 @@ app.post('/api/chat', async (req, res) => {
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    // This is a carefully crafted prompt to keep the AI on topic.
     const prompt = `
         You are a helpful environmental assistant named EcoBot for a specific location in Delhi.
         Your ONLY job is to answer questions based on the JSON data provided below.
