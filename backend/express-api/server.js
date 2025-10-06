@@ -43,7 +43,22 @@ async function getCoordinates(address) {
 
 // Reverse geocoding
 async function getAddress(lat, lon) {
-    if (!process.env.LOCATIONIQ_API_KEY) throw new Error("LocationIQ API key missing");
+    // Try Google Reverse Geocoding first for consistency
+    if (process.env.GOOGLE_API_KEY) {
+        try {
+            const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${process.env.GOOGLE_API_KEY}`;
+            const { data } = await axios.get(url);
+            if (data.status === 'OK' && data.results[0]) {
+                console.log("✅ Google Reverse Geocoding success.");
+                return data.results[0].formatted_address;
+            }
+        } catch (err) {
+            console.error("Google Reverse Geocoding error:", err.message);
+        }
+    }
+
+    // Fallback to LocationIQ
+    if (!process.env.LOCATIONIQ_API_KEY) throw new Error("No reverse geocoding API keys available");
     const { data } = await axios.get(`https://us1.locationiq.com/v1/reverse.php`, {
         params: { key: process.env.LOCATIONIQ_API_KEY, lat, lon, format: 'json' }
     });
