@@ -51,7 +51,7 @@ const EnvironmentalReport = ({ data, onBack }) => {
                     <NoiseWidget data={data.noiseLevel} />
                 </div>
                 <div className="lg:col-span-3">
-                    <CivicComplaintsWidget data={data.civicComplaints} />
+                    <CivicComplaintsWidget data={data.civicComplaints} location={data.location}/>
                 </div>
                  <div className="lg:col-span-3">
                     <RecommendationsWidget airQuality={data.airQuality} noiseLevel={data.noiseLevel} overallScore={data.overallScore}/>

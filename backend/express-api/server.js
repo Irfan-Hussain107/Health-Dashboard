@@ -3,7 +3,7 @@ import cors from 'cors';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
-import noiseLevel from './services/noiseLevel.js';
+import noiseLevel from './src/services/noiseLevel.js';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
@@ -270,6 +270,55 @@ app.post('/api/chat', async (req, res) => {
     } catch (error) {
         console.error("Gemini Chat API error:", error);
         res.status(500).json({ error: "Failed to get a response from the AI assistant." });
+    }
+});
+
+app.post('/api/draft-complaint', async (req, res) => {
+    const { userText, address } = req.body;
+    if (!userText || !address) {
+        return res.status(400).json({ error: "User text and address are required." });
+    }
+
+    // Using a reliable and fast model
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt = `
+    You are an AI assistant helping a resident of Delhi, India, draft a formal civic complaint email.
+    The user's location is: "${address}"
+    The user's simple, informal description of the problem is: "${userText}"
+
+    Your task is to convert this into a clear, formal, and respectful complaint email. The output MUST be a valid JSON object with two keys: "subject" and "body". Do not add any other text or markdown formatting like \`\`\`json.
+
+    Example user input: "garbage not picked up on my street corner for days, it smells bad"
+    Example JSON output:
+    {
+      "subject": "Urgent: Uncollected Garbage and Unsanitary Conditions",
+      "body": "To the Municipal Sanitation Department,\\n\\nThis is to formally report an overflowing public garbage bin located at ${address}. The bin has not been cleared for several days, resulting in a significant accumulation of waste that is causing a strong, unpleasant odor and creating unsanitary conditions for local residents.\\n\\nThis situation poses a potential health hazard and requires immediate attention. I request that you dispatch a sanitation team to clear the waste and schedule more frequent collections for this location.\\n\\nThank you for your prompt action on this matter.\\n\\nSincerely,\\nA Concerned Resident"
+    }
+    `;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
+        
+        let jsonResponse;
+        // This is the new, safer way to parse the response.
+        try {
+            // It cleans the text and tries to parse it as JSON.
+            jsonResponse = JSON.parse(responseText.replace(/```json/g, '').replace(/```/g, '').trim());
+        } catch (parseError) {
+            // If parsing fails, we create a fallback object instead of crashing.
+            console.error("Failed to parse Gemini response as JSON:", responseText);
+            jsonResponse = {
+                subject: "Civic Complaint",
+                body: responseText // Use the raw text as the body
+            };
+        }
+
+        res.json(jsonResponse);
+    } catch (error) {
+        console.error("Gemini Draft API error:", error);
+        res.status(500).json({ error: "Failed to draft complaint." });
     }
 });
 
