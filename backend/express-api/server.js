@@ -155,21 +155,38 @@ async function getAQI(lat, lon) {
     throw new Error("All AQI services failed");
 }
 
-// Mock civic complaints
-async function getCivicComplaints() {
-    const mockHtml = `
-        <div class="complaint">Waste not collected for 3 days.</div>
-        <div class="complaint">Loud music from wedding hall at night.</div>
-        <div class="complaint">Pothole on main road causing issues.</div>
-        <div class="complaint">Construction noise is unbearable.</div>
-    `;
-    const $ = cheerio.load(mockHtml);
-    const complaints = [];
-    $('.complaint').each((i, el) => complaints.push($(el).text()));
-    return { complaints, complaintCount: complaints.length };
+// CIVIC
+async function getCivicComplaints(address) {
+    try {
+        const res = await axios.post(`${process.env.FASTAPI_URL}/predict`, { address });
+        return {
+            total: res.data.total_complaints,
+            resolved: res.data.resolved_complaints,
+            pending: res.data.pending_complaints,
+            categories: res.data.categories || [{ name: "Placeholder Category", count: res.data.total_complaints }]
+        };
+    } catch (err) {
+        console.error("Error fetching civic complaints from FastAPI:", err.message);
+        // fallback to old mock data
+        const mockHtml = `
+            <div class="complaint">Waste not collected for 3 days.</div>
+            <div class="complaint">Loud music from wedding hall at night.</div>
+            <div class="complaint">Pothole on main road causing issues.</div>
+            <div class="complaint">Construction noise is unbearable.</div>
+        `;
+        const $ = cheerio.load(mockHtml);
+        const complaints = [];
+        $('.complaint').each((i, el) => complaints.push($(el).text()));
+        return {
+            total: complaints.length,
+            resolved: Math.floor(complaints.length * 0.78),
+            pending: Math.ceil(complaints.length * 0.22),
+            
+        };
+    }
 }
 
-// Calculate overall score
+
 function getOverallScore(aqi, noiseScore, complaintCount) {
     const norm = (val, max) => Math.max(0, 100 - (val / max) * 100);
     const aqiScore = norm(aqi, 200);
@@ -178,7 +195,6 @@ function getOverallScore(aqi, noiseScore, complaintCount) {
     return Math.round((aqiScore * 0.5) + (noiseScoreNorm * 0.3) + (complaintScore * 0.2));
 }
 
-// Generate AI summary
 async function getAISummary(data) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const prompt = `Analyze this environmental data for a location in Delhi and provide a 2-sentence summary for a potential resident.
@@ -189,7 +205,6 @@ async function getAISummary(data) {
     return result.response.text();
 }
 
-// Main API endpoint
 app.post('/api/report-card', async (req, res) => {
     const { address } = req.body;
     if (!address) return res.status(400).json({ error: 'Address is required' });
@@ -222,10 +237,10 @@ app.post('/api/report-card', async (req, res) => {
         const [airQuality, noiseData, civicData] = await Promise.all([
             getAQI(coordinates.lat, coordinates.lon),
             noiseLevel(coordinates.lat, coordinates.lon),
-            getCivicComplaints()
+            getCivicComplaints(address)
         ]);
 
-        const overallScore = getOverallScore(airQuality.aqi, parseFloat(noiseData.noiseScore), civicData.complaintCount);
+        const overallScore = getOverallScore(airQuality.aqi, parseFloat(noiseData.noiseScore), civicData.total);
 
         const responseData = {
             location: displayLocation,
@@ -236,12 +251,7 @@ app.post('/api/report-card', async (req, res) => {
                 day: parseFloat(noiseData.noiseScore),
                 night: Math.max(0, parseFloat(noiseData.noiseScore) - 10)
             },
-            civicComplaints: {
-                total: civicData.complaintCount,
-                resolved: Math.floor(civicData.complaintCount * 0.78),
-                pending: Math.ceil(civicData.complaintCount * 0.22),
-                categories: [{ name: "Placeholder Category", count: civicData.complaintCount }]
-            }
+            civicComplaints: civicData
         };
 
         console.log("🤖 Generating AI summary...");
@@ -294,7 +304,6 @@ app.post('/api/draft-complaint', async (req, res) => {
         return res.status(400).json({ error: "User text and address are required." });
     }
 
-    // Using a reliable and fast model
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `
@@ -317,16 +326,13 @@ app.post('/api/draft-complaint', async (req, res) => {
         const responseText = result.response.text();
         
         let jsonResponse;
-        // This is the new, safer way to parse the response.
         try {
-            // It cleans the text and tries to parse it as JSON.
             jsonResponse = JSON.parse(responseText.replace(/```json/g, '').replace(/```/g, '').trim());
         } catch (parseError) {
-            // If parsing fails, we create a fallback object instead of crashing.
             console.error("Failed to parse Gemini response as JSON:", responseText);
             jsonResponse = {
                 subject: "Civic Complaint",
-                body: responseText // Use the raw text as the body
+                body: responseText
             };
         }
 
@@ -340,3 +346,6 @@ app.post('/api/draft-complaint', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+
+
+
