@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 import { CloudIcon } from '@heroicons/react/24/outline';
 
-const AirQualityWidget = ({ data }) => {
+const AirQualityWidget = ({ data, darkMode }) => {
     const getAQIColor = (aqi) => {
         if (aqi <= 50) return '#22c55e'; // Green
         if (aqi <= 100) return '#facc15'; // Yellow
@@ -21,39 +21,55 @@ const AirQualityWidget = ({ data }) => {
     };
 
     return (
-        <motion.div variants={itemVariants} className="bg-white rounded-xl shadow-sm border p-6 h-full">
+        <motion.div
+            variants={itemVariants}
+            className={`rounded-xl shadow-sm border p-6 h-full transition-colors duration-300
+                ${darkMode 
+                    ? 'bg-gray-800 border-gray-700 text-gray-200' 
+                    : 'bg-white border-gray-200 text-gray-900'}`}
+        >
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Air Quality Index</h3>
-                <CloudIcon className="h-6 w-6 text-gray-400"/>
+                <h3 className="text-lg font-semibold">
+                    Air Quality Index
+                </h3>
+                <CloudIcon className={`h-6 w-6 ${darkMode ? 'text-gray-400' : 'text-gray-400'}`} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                 <div className="relative h-48">
                     <ResponsiveContainer width="100%" height="100%">
                         <RadialBarChart
-                            innerRadius="70%"
-                            outerRadius="100%"
-                            data={chartData}
-                            startAngle={90}
-                            endAngle={-270}
-                            barSize={20}
-                        >
-                            <PolarAngleAxis type="number" domain={[0, 300]} tick={false} />
-                            <RadialBar dataKey="value" cornerRadius={10} background fill={color} />
-                        </RadialBarChart>
+                           innerRadius="70%"
+                         outerRadius="100%"
+                         data={chartData}
+                         startAngle={90}
+                         endAngle={-270}
+                          barSize={20}
+                         >
+                <PolarAngleAxis type="number" domain={[0, 300]} tick={false} />
+                 <RadialBar 
+                dataKey="value" 
+                 cornerRadius={10} 
+                 background={{ fill: darkMode ? '#1f1f1f' : '#e5e7eb' }} 
+                    fill={color} 
+                  />
+                 </RadialBarChart>
+
                     </ResponsiveContainer>
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
                         <div className="text-4xl font-bold" style={{ color: color }}>{data.aqi}</div>
-                        <div className="text-sm font-medium text-gray-500">AQI</div>
+                        <div className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>AQI</div>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-gray-50 rounded-lg">
-                        <div className="text-xl font-semibold text-gray-900">{data.pm25}</div>
-                        <div className="text-xs text-gray-500">PM2.5 (μg/m³)</div>
+                    <div className={`text-center p-3 rounded-lg transition-colors duration-300
+                        ${darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-50 text-gray-900'}`}>
+                        <div className="text-xl font-semibold">{data.pm25}</div>
+                        <div className="text-xs">{`PM2.5 (μg/m³)`}</div>
                     </div>
-                    <div className="text-center p-3 bg-gray-50 rounded-lg">
-                        <div className="text-lg font-semibold text-gray-900">{data.pm10}</div>
-                        <div className="text-xs text-gray-500">PM10 (μg/m³)</div>
+                    <div className={`text-center p-3 rounded-lg transition-colors duration-300
+                        ${darkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-50 text-gray-900'}`}>
+                        <div className="text-lg font-semibold">{data.pm10}</div>
+                        <div className="text-xs">{`PM10 (μg/m³)`}</div>
                     </div>
                 </div>
             </div>
@@ -62,3 +78,4 @@ const AirQualityWidget = ({ data }) => {
 };
 
 export default AirQualityWidget;
+
