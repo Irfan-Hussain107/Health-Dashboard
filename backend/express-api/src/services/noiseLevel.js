@@ -97,7 +97,7 @@ async function noiseLevel(lat, lon){
 
         const totalRawScore = Object.values(maxPressureScores).reduce((sum, current) => sum + current, 0);
         console.log(totalRawScore)
-        const maximumExpectedScore = 0.05;
+        const maximumExpectedScore = 0.1;
         const normalizedScore = (totalRawScore / maximumExpectedScore) * 100;
         const finalScore = Math.min(normalizedScore, 100);
 
