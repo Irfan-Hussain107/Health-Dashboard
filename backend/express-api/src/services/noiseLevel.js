@@ -82,6 +82,7 @@ async function noiseLevel(lat, lon){
             const pressureScore = baseWeight / (distanceInMeters + 10);
             maxPressureScores[sourceTypeKey] = Math.max(maxPressureScores[sourceTypeKey] || 0, pressureScore);
             
+            
             accumulator.push({
                 id: source.id,
                 name: tags.name || "Unnamed",
@@ -95,9 +96,12 @@ async function noiseLevel(lat, lon){
         }, []); // Start with an empty array as our initial accumulator
 
         const totalRawScore = Object.values(maxPressureScores).reduce((sum, current) => sum + current, 0);
+        console.log(totalRawScore)
         const maximumExpectedScore = 0.1;
         const normalizedScore = (totalRawScore / maximumExpectedScore) * 100;
         const finalScore = Math.min(normalizedScore, 100);
+
+        console.log(maxPressureScores)
 
         return {
             noiseScore: finalScore.toFixed(2),
