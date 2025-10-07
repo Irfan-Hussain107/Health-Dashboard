@@ -1,14 +1,15 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
-import dotenv from 'dotenv';
 import * as cheerio from 'cheerio';
 import geolib from "geolib"
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import noiseLevel from './src/services/noiseLevel.js';
 
-dotenv.config();
-
+// console.log("Attempting fast api call", process.env.FASTAPI_URL);
 const app = express();
 const PORT = process.env.SERVER_PORT || 3001;
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
