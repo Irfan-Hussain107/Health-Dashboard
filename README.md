@@ -8,7 +8,7 @@ An innovative web platform that provides a real-time, AI-powered "Environmental 
 ## ✨ Key Features
 
 * **📍 Interactive Location Search:** A dynamic search page with a clickable Google Map and address autocomplete for intuitive location selection.
-* **scorecard-icon> Comprehensive Report Card:** Generates a detailed report with live data on:
+* **Comprehensive Report Card:** Generates a detailed report with live data on:
     * **Air Quality (AQI):** Real-time PM2.5, PM10, and AQI from official monitoring stations.
     * **Noise Levels:** An advanced proxy score based on proximity to noise sources from OpenStreetMap.
     * **Civic Complaints:** A predictive model for local complaint density.
