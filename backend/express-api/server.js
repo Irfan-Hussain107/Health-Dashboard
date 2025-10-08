@@ -283,6 +283,8 @@ app.post('/api/chat', async (req, res) => {
         (like "what is the capital of France?" or "write me a poem"), you must politely decline and say
         "I can only answer questions about this environmental report."
 
+        **Format your answer as plain text only. Do not use any Markdown formatting, such as using asterisks (**) for bolding.**
+
         Here is the environmental data for the user's selected location:
         ${JSON.stringify(contextData, null, 2)}
 
