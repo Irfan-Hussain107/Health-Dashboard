@@ -9,7 +9,7 @@ import geolib from "geolib"
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import noiseLevel from './src/services/noiseLevel.js';
 
-// console.log("Attempting fast api call", process.env.FASTAPI_URL);
+console.log("Attempting fast api call", process.env.FASTAPI_URL);
 const app = express();
 const PORT = process.env.SERVER_PORT || 3001;
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -342,6 +342,45 @@ app.post('/api/draft-complaint', async (req, res) => {
     } catch (error) {
         console.error("Gemini Draft API error:", error);
         res.status(500).json({ error: "Failed to draft complaint." });
+    }
+});
+
+// Add this new endpoint to server.js
+app.post('/api/compare-summary', async (req, res) => {
+    const { reports } = req.body;
+    if (!reports || reports.length < 2) {
+        return res.status(400).json({ error: 'At least two reports are required.' });
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    
+    // This is a new, specialized prompt for comparison
+    const prompt = `
+        You are an environmental analyst comparing two locations in Delhi based on this JSON data.
+        For each location, provide a very short, one-sentence summary of its pros and one-sentence summary of its cons.
+
+        Your output MUST be a valid JSON object with four keys: "prosA", "consA", "prosB", "consB".
+
+        Location A Data: ${JSON.stringify(reports[0])}
+        Location B Data: ${JSON.stringify(reports[1])}
+
+        Example output:
+        {
+            "prosA": "This area benefits from relatively better air quality compared to the other.",
+            "consA": "The high number of civic complaints suggests issues with local services.",
+            "prosB": "Fewer civic complaints indicate well-maintained local infrastructure.",
+            "consB": "Air quality is a significant concern and is worse than the other location."
+        }
+    `;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
+        const jsonResponse = JSON.parse(responseText.replace(/```json/g, '').replace(/```/g, '').trim());
+        res.json(jsonResponse);
+    } catch (error) {
+        console.error("Gemini Comparison API error:", error);
+        res.status(500).json({ error: "Failed to generate AI comparison." });
     }
 });
 
