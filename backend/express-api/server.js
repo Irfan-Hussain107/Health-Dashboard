@@ -352,25 +352,57 @@ app.post('/api/compare-summary', async (req, res) => {
         return res.status(400).json({ error: 'At least two reports are required.' });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     
     // This is a new, specialized prompt for comparison
     const prompt = `
-        You are an environmental analyst comparing two locations in Delhi based on this JSON data.
-        For each location, provide a very short, one-sentence summary of its pros and one-sentence summary of its cons.
-
-        Your output MUST be a valid JSON object with four keys: "prosA", "consA", "prosB", "consB".
+        You are an environmental health analyst providing a detailed point-by-point comparison between two locations.
 
         Location A Data: ${JSON.stringify(reports[0])}
         Location B Data: ${JSON.stringify(reports[1])}
 
-        Example output:
+        Compare these locations across the following metrics in order:
+        1. Air Quality Index (AQI) - Mention actual values and which location is better/worse
+        2. Noise Levels - Mention decibel values and which is quieter/louder
+        3. Civic Complaints - Mention complaint counts and service quality
+        4. Overall Environmental Health - assessment and recommendation
+
+        For EACH metric, provide:
+        - A clear comparison statement with actual numbers
+        - Which location performs better for that metric
+        - A brief explanation of what this means for residents
+
+        Your response MUST be a valid JSON object with exactly these keys:
+
         {
-            "prosA": "This area benefits from relatively better air quality compared to the other.",
-            "consA": "The high number of civic complaints suggests issues with local services.",
-            "prosB": "Fewer civic complaints indicate well-maintained local infrastructure.",
-            "consB": "Air quality is a significant concern and is worse than the other location."
+            "airQuality": {
+                "comparison": "Location A has an AQI of X while Location B has Y, making [location] significantly better for respiratory health",
+                "winner": "A" or "B" or "tie",
+                "severity": "good" or "moderate" or "poor"
+            },
+            "noiseLevel": {
+                "comparison": "Location A records X dB compared to Location B's Y dB, with [location] offering a quieter environment",
+                "winner": "A" or "B" or "tie",
+                "severity": "good" or "moderate" or "poor"
+            },
+            "civicComplaints": {
+                "comparison": "Location A has X complaints versus Location B's Y complaints, indicating [better/worse] local services",
+                "winner": "A" or "B" or "tie",
+                "severity": "good" or "moderate" or "poor"
+            },
+            "overall": {
+                "comparison": "Based on all metrics, [location] offers better overall environmental health with [brief reason]",
+                "recommendation": "Location A is recommended" or "Location B is recommended" or "Both locations are comparable",
+                "summary": "One sentence final verdict"
+            }
         }
+
+        Rules:
+        - Include actual numeric values in comparisons
+        - Keep comparison sentences clear and under 30 words
+        - winner must be exactly "A", "B", or "tie"
+        - severity must be exactly "good", "moderate", or "poor"
+        - Do not include any text outside the JSON object
     `;
 
     try {
@@ -387,6 +419,5 @@ app.post('/api/compare-summary', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-
 
 
