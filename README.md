@@ -1,9 +1,5 @@
 # EcoCode: The Hyperlocal Environmental Health Dashboard
 
-[![React][React-shield]][React-url]
-[![Node.js][Node-shield]][Node-url]
-[![Python][Python-shield]][Python-url]
-[![Vercel][Vercel-shield]][Vercel-url]
 
 An innovative web platform that provides a real-time, AI-powered "Environmental Report Card" for any address in Delhi, helping citizens make healthier, more informed decisions about their living environment.
 
@@ -12,7 +8,7 @@ An innovative web platform that provides a real-time, AI-powered "Environmental 
 ## ✨ Key Features
 
 * **📍 Interactive Location Search:** A dynamic search page with a clickable Google Map and address autocomplete for intuitive location selection.
-* ** scorecard-icon> Comprehensive Report Card:** Generates a detailed report with live data on:
+* **scorecard-icon> Comprehensive Report Card:** Generates a detailed report with live data on:
     * **Air Quality (AQI):** Real-time PM2.5, PM10, and AQI from official monitoring stations.
     * **Noise Levels:** An advanced proxy score based on proximity to noise sources from OpenStreetMap.
     * **Civic Complaints:** A predictive model for local complaint density.
@@ -22,18 +18,6 @@ An innovative web platform that provides a real-time, AI-powered "Environmental 
     * **Contextual Chatbot:** An AI assistant ("EcoBot") that answers user questions based on the data in the current report.
     * **AI Complaint Assistant:** Helps users draft formal, effective civic complaint emails from simple, everyday language.
 
-## 🚀 Live Demo & Screenshots
-
-**(You can add a link to your deployed Vercel/Netlify app and screenshots here)**
-
-
-
-[Image of Main Search Page]
-
-
-
-
----
 
 ## 🛠️ Technology Stack
 
