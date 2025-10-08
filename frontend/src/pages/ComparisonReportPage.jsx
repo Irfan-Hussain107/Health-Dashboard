@@ -62,7 +62,7 @@ const ComparisonReportPage = ({ data, onBack, darkMode }) => {
             {/* Content */}
             <div className="max-w-screen-xl mx-auto px-2 py-2 sm:px-4 lg:px-6">
                 <div className="mb-3">
-                    <AIComparisonWidget reports={[reportA, reportB]} darkMode={darkMode} />
+                    <AIComparisonWidget reports={data} darkMode={darkMode} />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
