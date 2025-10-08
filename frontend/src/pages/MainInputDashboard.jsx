@@ -169,9 +169,10 @@ const MainInputDashboard = ({ onLocationSearch, loading, darkMode }) => {
   }
 
   return (
-    <div className="min-h-screen">
+      <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-[#1a1a1a]' : 'bg-gradient-to-br from-green-50 to-blue-50'}`}>
       {/* Toggle Section */}
-      <div className={`py-6 ${darkMode ? 'bg-[#2E2B2B]' : 'bg-gradient-to-br from-green-50 to-blue-50'}`}>
+       <div className="py-6">
+
         <div className="max-w-md mx-auto px-4">
           <div className="flex items-center justify-center gap-4">
             <span className={`font-medium ${!comparisonMode ? 'text-green-600' : darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -199,7 +200,8 @@ const MainInputDashboard = ({ onLocationSearch, loading, darkMode }) => {
       {!comparisonMode ? (
         // Single Location Mode
         <div className="grid grid-cols-1 lg:grid-cols-2">
-          <div className={`flex items-center justify-center p-8 ${darkMode ? 'bg-[#2E2B2B]' : 'bg-gradient-to-br from-green-50 to-blue-50'}`}>
+           <div className="flex items-center justify-center p-8">
+
             <div className="max-w-md w-full text-center lg:text-left">
               <h1 className={`text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                 Uncover Your Neighborhood's Health.
@@ -291,7 +293,8 @@ const MainInputDashboard = ({ onLocationSearch, loading, darkMode }) => {
             </div>
           </div>
 
-          <div className={`h-96 lg:h-full p-4 lg:p-8 flex items-center justify-center relative ${darkMode ? 'bg-[#2E2B2B]' : 'bg-gradient-to-br from-green-50 to-blue-50'}`}>
+            <div className="h-96 lg:h-full p-4 lg:p-8 flex items-center justify-center relative">
+
             <div className="w-full h-full bg-white dark:bg-gray-900 rounded-2xl shadow-lg border overflow-hidden relative">
               <GoogleMap
                 mapContainerStyle={{ width: '100%', height: '100%' }}
@@ -326,11 +329,13 @@ const MainInputDashboard = ({ onLocationSearch, loading, darkMode }) => {
         </div>
       ) : (
         // Comparison Mode - Two Locations Side by Side
-        <div className={`${darkMode ? 'bg-[#2E2B2B]' : 'bg-gradient-to-br from-green-50 to-blue-50'}`}>
-          <div className="max-w-7xl mx-auto p-8">
-            <h1 className={`text-3xl font-bold mb-8 text-center ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              Compare Two Locations
-            </h1>
+         // Comparison Mode - Two Locations Side by Side
+<div>
+  <div className="max-w-7xl mx-auto p-8">
+    <h1 className={`text-3xl font-bold mb-8 text-center ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+      Compare Two Locations
+    </h1>
+
 
             <form onSubmit={handleSubmit} className="mb-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -474,7 +479,8 @@ const MainInputDashboard = ({ onLocationSearch, loading, darkMode }) => {
                     Use current location
                   </button>
 
-                  <div className="w-full h-80 bg-white dark:bg-gray-900 rounded-xl shadow-lg border overflow-hidden relative">
+                    <div className={`w-full h-80 rounded-xl shadow-lg border overflow-hidden relative ${darkMode ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
+
                     <GoogleMap
                       mapContainerStyle={{ width: '100%', height: '100%' }}
                       center={centerB}
