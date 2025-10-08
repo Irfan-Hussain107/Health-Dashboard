@@ -5,24 +5,24 @@ import axios from 'axios';
 import { ChatBubbleLeftRightIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const CustomHeader = ({ onClose }) => {
+const CustomHeader = ({ onClose, darkMode }) => {
     return (
-        <div className="bg-green-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
+        <div className={`p-4 rounded-t-2xl flex items-center justify-between ${darkMode ? 'bg-[#222] text-gray-100' : 'bg-green-600 text-white'}`}>
             <div className="flex items-center">
                 <div className="relative mr-3">
-                    <div className="w-10 h-10 bg-green-700 rounded-full flex items-center justify-center font-bold text-xl">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl ${darkMode ? 'bg-green-700 text-white' : 'bg-green-700 text-white'}`}>
                         E
                     </div>
                     <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-400 border-2 border-green-600"></span>
                 </div>
                 <div>
                     <div className="font-semibold">EcoBot</div>
-                    <div className="text-xs text-green-200">Online</div>
+                    <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-green-200'}`}>Online</div>
                 </div>
             </div>
             <button 
                 onClick={onClose}
-                className="p-1 rounded-full text-green-200 hover:bg-green-700 hover:text-white transition-colors"
+                className={`p-1 rounded-full transition-colors ${darkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-green-200 hover:bg-green-700 hover:text-white'}`}
                 title="Close Chat"
             >
                 <XMarkIcon className="h-6 w-6" />
@@ -31,7 +31,7 @@ const CustomHeader = ({ onClose }) => {
     );
 };
 
-const ChatbotWidget = ({ reportContext }) => {
+const ChatbotWidget = ({ reportContext, darkMode }) => {
     const [showChatbot, setShowChatbot] = useState(false);
     
     const config = {
@@ -44,11 +44,12 @@ const ChatbotWidget = ({ reportContext }) => {
             },
         ],
         customComponents: {
-            header: () => <CustomHeader onClose={() => setShowChatbot(false)} />,
+            header: () => <CustomHeader onClose={() => setShowChatbot(false)} darkMode={darkMode} />,
         },
         customStyles: {
-            botMessageBox: { backgroundColor: '#10b981' },
-            chatButton: { backgroundColor: '#10b981' },
+            botMessageBox: { backgroundColor: darkMode ? '#10b981' : '#10b981' },
+            chatButton: { backgroundColor: darkMode ? '#10b981' : '#10b981' },
+            chatInput: { backgroundColor: darkMode ? '#333' : '#fff', color: darkMode ? '#fff' : '#000' },
         },
     };
 
@@ -106,7 +107,7 @@ const ChatbotWidget = ({ reportContext }) => {
             {!showChatbot && (
                 <motion.button
                     onClick={() => setShowChatbot(true)}
-                    className="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-lg z-20"
+                    className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg z-20 ${darkMode ? 'bg-green-700 text-white hover:bg-green-600' : 'bg-green-600 text-white hover:bg-green-700'}`}
                     title="Ask EcoBot"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
@@ -125,7 +126,7 @@ const ChatbotWidget = ({ reportContext }) => {
                         animate="visible"
                         exit="hidden"
                     >
-                        <div className="bg-white h-full flex flex-col rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+                        <div className={`h-full flex flex-col rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl border ${darkMode ? 'bg-[#222] border-gray-700' : 'bg-white border-gray-200'}`}>
                             <style>{`
                                 .react-chatbot-kit-chat-container {
                                     width: 100%;
@@ -141,10 +142,11 @@ const ChatbotWidget = ({ reportContext }) => {
                                     flex: 1;
                                     overflow-y: auto;
                                     padding: 16px;
+                                    background-color: ${darkMode ? '#1a1a1a' : '#fff'};
+                                    color: ${darkMode ? '#fff' : '#000'};
                                 }
                                 .react-chatbot-kit-chat-input-container {
                                     padding: 16px;
-                                    // border-top: 1px solid #e5e7eb;
                                 }
                                 .react-chatbot-kit-chat-input-form {
                                     display: flex;
@@ -152,6 +154,9 @@ const ChatbotWidget = ({ reportContext }) => {
                                 }
                                 .react-chatbot-kit-chat-input {
                                     flex: 1;
+                                    background-color: ${darkMode ? '#333' : '#fff'};
+                                    color: ${darkMode ? '#fff' : '#000'};
+                                    border: 1px solid ${darkMode ? '#555' : '#ddd'};
                                 }
                                 .react-chatbot-kit-chat-bot-message-container {
                                     display: flex;
