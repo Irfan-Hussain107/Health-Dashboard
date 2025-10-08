@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { SparklesIcon, CheckCircleIcon, XCircleIcon, MinusCircleIcon } from '@heroicons/react/24/solid';
 
-const AIComparisonWidget = ({ reports }) => {
+const AIComparisonWidget = ({ reports, darkMode }) => {
     const [comparison, setComparison] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -31,10 +31,10 @@ const AIComparisonWidget = ({ reports }) => {
 
     const getSeverityColor = (severity) => {
         switch(severity) {
-            case 'good': return 'bg-green-50 border-green-200';
-            case 'moderate': return 'bg-yellow-50 border-yellow-200';
-            case 'poor': return 'bg-red-50 border-red-200';
-            default: return 'bg-gray-50 border-gray-200';
+            case 'good': return darkMode ? 'bg-green-900/20 border-green-700' : 'bg-green-50 border-green-200';
+            case 'moderate': return darkMode ? 'bg-yellow-900/20 border-yellow-700' : 'bg-yellow-50 border-yellow-200';
+            case 'poor': return darkMode ? 'bg-red-900/20 border-red-700' : 'bg-red-50 border-red-200';
+            default: return darkMode ? 'bg-gray-900/20 border-gray-700' : 'bg-gray-50 border-gray-200';
         }
     };
 
@@ -48,117 +48,71 @@ const AIComparisonWidget = ({ reports }) => {
     };
 
     if (loading) return (
-        <div className="bg-white rounded-xl border p-8 text-center">
+        <div className={`rounded-xl border p-6 text-center ${darkMode ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-white text-gray-600'}`}>
             <div className="animate-spin h-8 w-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-600">Generating AI-Powered Comparison...</p>
+            <p>Generating AI-Powered Comparison...</p>
         </div>
     );
 
     if (!comparison) return (
-        <div className="bg-white rounded-xl border p-6 text-center text-gray-500">
+        <div className={`rounded-xl border p-4 text-center ${darkMode ? 'bg-gray-800text-gray-400 border-gray-700' : 'bg-white text-gray-500 border-gray-200'}`}>
             Unable to generate comparison. Please try again.
         </div>
     );
 
     return (
-        <div className="bg-white rounded-xl shadow-lg border-2 border-purple-100 p-6">
-            <div className="flex items-center gap-3 mb-6">
-                <SparklesIcon className="h-7 w-7 text-purple-500" />
-                <h3 className="text-xl font-bold text-gray-900">AI-Powered Detailed Comparison</h3>
+        <div className={`rounded-xl shadow-lg border-2 p-4 ${darkMode ? 'bg-gray-800 border-purple-600 text-gray-200' : 'bg-white border-purple-100 text-gray-900'}`}>
+            <div className="flex items-center gap-2 mb-4">
+                <SparklesIcon className={`h-6 w-6 ${darkMode ? 'text-purple-400' : 'text-purple-500'}`} />
+                <h3 className="text-lg font-bold">AI-Powered Detailed Comparison</h3>
             </div>
 
             {/* Location Headers */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="text-center p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
-                    <h4 className="font-bold text-lg text-blue-900 truncate">📍 Location A</h4>
-                    <p className="text-sm text-blue-700 truncate">{reports[0].location}</p>
+            <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className={`text-center p-2 rounded-lg border-2 ${darkMode ? 'bg-blue-900/20 border-blue-600 text-blue-200' : 'bg-blue-50 border-blue-200 text-blue-900'}`}>
+                    <h4 className="font-bold text-sm truncate">📍 Location A</h4>
+                    <p className="text-xs truncate">{reports[0].location}</p>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg border-2 border-purple-200">
-                    <h4 className="font-bold text-lg text-purple-900 truncate">📍 Location B</h4>
-                    <p className="text-sm text-purple-700 truncate">{reports[1].location}</p>
-                </div>
-            </div>
-
-            {/* Air Quality Comparison */}
-            <div className={`mb-4 p-4 rounded-lg border-2 ${getSeverityColor(comparison.airQuality?.severity)}`}>
-                <div className="flex items-start gap-3 mb-3">
-                    <span className="text-2xl">{getSeverityEmoji(comparison.airQuality?.severity)}</span>
-                    <div className="flex-1">
-                        <h4 className="font-bold text-gray-900 mb-1">🌫️ Air Quality Index</h4>
-                        <p className="text-gray-700 text-sm leading-relaxed">{comparison.airQuality?.comparison}</p>
-                    </div>
-                </div>
-                <div className="flex justify-around pt-3 border-t border-gray-200">
-                    <div className="flex items-center gap-2">
-                        {getWinnerIcon(comparison.airQuality?.winner, 'A')}
-                        <span className="text-sm font-medium text-gray-700">Location A</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        {getWinnerIcon(comparison.airQuality?.winner, 'B')}
-                        <span className="text-sm font-medium text-gray-700">Location B</span>
-                    </div>
+                <div className={`text-center p-2 rounded-lg border-2 ${darkMode ? 'bg-purple-900/20 border-purple-600 text-purple-200' : 'bg-purple-50 border-purple-200 text-purple-900'}`}>
+                    <h4 className="font-bold text-sm truncate">📍 Location B</h4>
+                    <p className="text-xs truncate">{reports[1].location}</p>
                 </div>
             </div>
 
-            {/* Noise Level Comparison */}
-            <div className={`mb-4 p-4 rounded-lg border-2 ${getSeverityColor(comparison.noiseLevel?.severity)}`}>
-                <div className="flex items-start gap-3 mb-3">
-                    <span className="text-2xl">{getSeverityEmoji(comparison.noiseLevel?.severity)}</span>
-                    <div className="flex-1">
-                        <h4 className="font-bold text-gray-900 mb-1">🔊 Noise Levels</h4>
-                        <p className="text-gray-700 text-sm leading-relaxed">{comparison.noiseLevel?.comparison}</p>
+            {['airQuality', 'noiseLevel', 'civicComplaints'].map((key) => (
+                <div key={key} className={`mb-3 p-3 rounded-lg border-2 ${getSeverityColor(comparison[key]?.severity)}`}>
+                    <div className="flex items-start gap-2 mb-2">
+                        <span className="text-xl">{getSeverityEmoji(comparison[key]?.severity)}</span>
+                        <div className="flex-1">
+                            <h4 className="font-bold text-sm mb-1">
+                                {key === 'airQuality' ? '🌫️ Air Quality Index' : key === 'noiseLevel' ? '🔊 Noise Levels' : '📋 Civic Complaints'}
+                            </h4>
+                            <p className="text-xs leading-relaxed">{comparison[key]?.comparison}</p>
+                        </div>
+                    </div>
+                    <div className="flex justify-around pt-2 border-t border-gray-600/30 text-xs">
+                        <div className="flex items-center gap-1">
+                            {getWinnerIcon(comparison[key]?.winner, 'A')}
+                            Location A
+                        </div>
+                        <div className="flex items-center gap-1">
+                            {getWinnerIcon(comparison[key]?.winner, 'B')}
+                            Location B
+                        </div>
                     </div>
                 </div>
-                <div className="flex justify-around pt-3 border-t border-gray-200">
-                    <div className="flex items-center gap-2">
-                        {getWinnerIcon(comparison.noiseLevel?.winner, 'A')}
-                        <span className="text-sm font-medium text-gray-700">Location A</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        {getWinnerIcon(comparison.noiseLevel?.winner, 'B')}
-                        <span className="text-sm font-medium text-gray-700">Location B</span>
-                    </div>
-                </div>
-            </div>
+            ))}
 
-            {/* Civic Complaints Comparison */}
-            <div className={`mb-4 p-4 rounded-lg border-2 ${getSeverityColor(comparison.civicComplaints?.severity)}`}>
-                <div className="flex items-start gap-3 mb-3">
-                    <span className="text-2xl">{getSeverityEmoji(comparison.civicComplaints?.severity)}</span>
-                    <div className="flex-1">
-                        <h4 className="font-bold text-gray-900 mb-1">📋 Civic Complaints</h4>
-                        <p className="text-gray-700 text-sm leading-relaxed">{comparison.civicComplaints?.comparison}</p>
-                    </div>
-                </div>
-                <div className="flex justify-around pt-3 border-t border-gray-200">
-                    <div className="flex items-center gap-2">
-                        {getWinnerIcon(comparison.civicComplaints?.winner, 'A')}
-                        <span className="text-sm font-medium text-gray-700">Location A</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        {getWinnerIcon(comparison.civicComplaints?.winner, 'B')}
-                        <span className="text-sm font-medium text-gray-700">Location B</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Overall Verdict */}
-            <div className="mt-6 p-5 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border-2 border-purple-200">
-                <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                    <span className="text-2xl">🏆</span>
-                    Overall Environmental Health
-                </h4>
-                <p className="text-gray-700 mb-3 leading-relaxed">{comparison.overall?.comparison}</p>
-                <div className="bg-white p-3 rounded-lg border border-purple-200">
-                    <p className="text-sm font-semibold text-purple-900">
-                        💡 Recommendation: {comparison.overall?.recommendation}
-                    </p>
-                    <p className="text-sm text-gray-600 mt-1">{comparison.overall?.summary}</p>
-                </div>
+            {/* Overall Verdict Circle */}
+            <div className={`mt-4 p-4 rounded-full border-2 ${darkMode ? 'border-purple-400 bg-purple-900/20' : 'border-purple-200 bg-purple-50'}`}>
+                <h4 className="font-bold text-center text-sm mb-1">🏆 Overall Environmental Health</h4>
+                <p className="text-center text-xs">{comparison.overall?.comparison}</p>
+                <p className="text-center text-purple-200/80 text-xs mt-1 font-semibold">
+                    Recommendation: {comparison.overall?.recommendation}
+                </p>
             </div>
         </div>
     );
 };
 
 export default AIComparisonWidget;
-
