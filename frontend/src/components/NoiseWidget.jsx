@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 import { SpeakerWaveIcon } from '@heroicons/react/24/outline';
 
 const NoiseWidget = ({ data, darkMode }) => {
@@ -30,11 +30,14 @@ const NoiseWidget = ({ data, darkMode }) => {
             </div>
             <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                    <BarChart data={chartData} margin={{ top: 20, right: 20, left: -10, bottom: 5 }}>
                         <XAxis dataKey="name" tick={{ fontSize: 12, fill: darkMode ? '#ddd' : '#333' }} />
                         <YAxis tick={{ fontSize: 12, fill: darkMode ? '#ddd' : '#333' }} />
-                        <Tooltip cursor={{ fill: 'rgba(236, 252, 241, 0.5)' }} />
-                        <Bar dataKey="level" fill="#10b981" />
+                        <Tooltip cursor={{ fill: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(236, 252, 241, 0.5)' }} />
+                        <Bar dataKey="level" fill="#10b981">
+                            {/* Display value above each bar */}
+                            <LabelList dataKey="level" position="top" fill={darkMode ? '#ddd' : '#111'} fontSize={14} />
+                        </Bar>
                     </BarChart>
                 </ResponsiveContainer>
             </div>
@@ -43,3 +46,4 @@ const NoiseWidget = ({ data, darkMode }) => {
 };
 
 export default NoiseWidget;
+
